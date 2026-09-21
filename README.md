@@ -1,6 +1,8 @@
-# Riso lab
+# Fluoro
 
-A small toolkit for faking risograph prints in the browser. It shows three ways to get the look, all driven by the same inks and settings:
+Riso-fy (almost) anything.
+
+Fluoro is a small toolkit for faking risograph prints in the browser. It shows three ways to get the look, all driven by the same inks and settings:
 
 1. **Canvas pipeline** for images: separate an image into ink layers, screen each layer to 1-bit, tint, and multiply onto paper.
 2. **CSS layout** built like a print: flat ink layers, `mix-blend-mode: multiply`, a misregistered second pass on the headline, and a paper grain overlay.
