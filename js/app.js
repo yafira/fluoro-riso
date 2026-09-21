@@ -75,6 +75,7 @@ function applyVars() {
   r.setProperty("--ink-a", state.inkA);
   r.setProperty("--ink-b", state.inkB);
   r.setProperty("--mis", state.mis + "px");
+  $("mock").classList.toggle("on", state.fon);
 }
 
 function labels() {
@@ -84,6 +85,7 @@ function labels() {
   $("grainO").textContent = state.grain.toFixed(2);
   $("misO").textContent = state.mis + "px";
   $("opacityO").textContent = state.opacity.toFixed(2);
+  $("fgrainO").textContent = state.fgrain.toFixed(1);
 }
 
 var queued = false;
@@ -93,7 +95,7 @@ function schedule() {
   queued = true;
   requestAnimationFrame(function () {
     queued = false;
-    labels(); applyVars(); renderMain(); renderSwatch();
+    labels(); applyVars(); buildFilter(); renderMain(); renderSwatch();
   });
 }
 
@@ -116,6 +118,7 @@ bindRange("mis", "mis", true);
 
 bindRange("opacity", "opacity");
 
+bindRange("fgrain", "fgrain");
 
 $("mode").addEventListener("change", function (e) { state.mode = e.target.value; schedule(); });
 
@@ -125,6 +128,7 @@ $("inkB").addEventListener("input", function (e) { state.inkB = e.target.value; 
 
 $("orig").addEventListener("change", function (e) { state.orig = e.target.checked; schedule(); });
 
+$("fon").addEventListener("change", function (e) { state.fon = e.target.checked; schedule(); });
 
 Array.prototype.forEach.call(document.querySelectorAll("[data-a]"), function (b) {
   b.addEventListener("click", function () {
