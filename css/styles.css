@@ -80,13 +80,15 @@ p { margin: 0 0 12px; max-width: 62ch; }
 
 .press {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+  grid-template-columns: minmax(0, 2.2fr) minmax(250px, 1fr);
   gap: clamp(16px, 3vw, 32px);
   align-items: start;
 }
 @media (max-width: 780px) { .press { grid-template-columns: minmax(0, 1fr); } }
 
 .frame {
+  width: fit-content;
+  max-width: 100%;
   border: 2px solid var(--ink-b);
   line-height: 0;
   background: #fff;
@@ -115,9 +117,14 @@ select {
 .check input { width: 18px; height: 18px; accent-color: var(--ink-a); }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
   font: inherit;
   font-weight: 600;
   font-size: 14px;
+  line-height: 1.2;
   cursor: pointer;
   padding: 8px 14px;
   color: var(--text);
@@ -133,7 +140,12 @@ select {
 }
 .btn.solid:hover { background: var(--ink-b); color: var(--paper); }
 .presets { display: flex; flex-wrap: wrap; gap: 8px; }
-.file { display: inline-block; }
+.stage-col { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.flaws { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 18px; }
+@media (max-width: 620px) { .flaws { grid-template-columns: minmax(0, 1fr); } }
+.panel .note { margin: 0; }
+.file { position: relative; display: inline-flex; }
 .file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .file:focus-within .btn { outline: 3px solid var(--ink-b); outline-offset: 2px; }
 button:focus-visible, select:focus-visible, input:focus-visible {

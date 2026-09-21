@@ -18,7 +18,28 @@
   <p class="lede">Two inks, one sheet of paper. Load an image, then push the sliders to see how each print flaw changes the look. The same settings drive the page layout and the filter demo further down.</p>
 
   <div class="press">
-    <div class="frame"><canvas id="out" aria-label="Riso print preview"></canvas></div>
+    <div class="stage-col">
+      <div class="frame"><canvas id="out" aria-label="Riso print preview"></canvas></div>
+      <div class="actions">
+        <label class="file"><input type="file" id="file" accept="image/*"><span class="btn solid">Load your image</span></label>
+        <button class="btn" type="button" id="reprint">Reprint</button>
+        <label class="check"><input type="checkbox" id="orig"> Show original</label>
+      </div>
+      <div class="flaws">
+        <div class="row">
+          <label for="grain">Threshold grain <output id="grainO"></output></label>
+          <input type="range" id="grain" min="0" max="0.4" step="0.01" value="0.08">
+        </div>
+        <div class="row">
+          <label for="mis">Misregistration <output id="misO"></output></label>
+          <input type="range" id="mis" min="0" max="8" step="1" value="2">
+        </div>
+        <div class="row">
+          <label for="opacity">Ink opacity <output id="opacityO"></output></label>
+          <input type="range" id="opacity" min="0.6" max="1" step="0.01" value="0.92">
+        </div>
+      </div>
+    </div>
 
     <div class="panel">
       <h3>Press settings</h3>
@@ -57,25 +78,7 @@
         <label for="contrast">Contrast <output id="contrastO"></output></label>
         <input type="range" id="contrast" min="0.6" max="2" step="0.05" value="1.2">
       </div>
-      <div class="row">
-        <label for="grain">Threshold grain <output id="grainO"></output></label>
-        <input type="range" id="grain" min="0" max="0.4" step="0.01" value="0.08">
-      </div>
-      <div class="row">
-        <label for="mis">Misregistration <output id="misO"></output></label>
-        <input type="range" id="mis" min="0" max="8" step="1" value="2">
-      </div>
-      <div class="row">
-        <label for="opacity">Ink opacity <output id="opacityO"></output></label>
-        <input type="range" id="opacity" min="0.6" max="1" step="0.01" value="0.92">
-      </div>
 
-      <label class="check"><input type="checkbox" id="orig"> Show original</label>
-
-      <div class="presets">
-        <label class="file"><input type="file" id="file" accept="image/*"><span class="btn solid">Load your image</span></label>
-        <button class="btn" type="button" id="reprint">Reprint</button>
-      </div>
       <p class="note">Each ink is matched to the color channel it absorbs most, so pink reads the green channel and blue reads the red one. Images stay in your browser.</p>
     </div>
   </div>
