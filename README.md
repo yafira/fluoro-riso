@@ -89,7 +89,7 @@ The two layers are then multiplied onto a `feFlood` paper color with `feBlend`. 
 
 ### Starting point
 
-p5.riso already exists and is a good tool. This project started from the wish to own the whole pipeline and to build it in the same spirit as the other image tools it sits next to, Punch Card Studio and Pixel Picnic: paste in or load an image, get a physical-feeling result, keep every step visible. The second question was whether the same effect could be applied to a whole website.
+[p5.riso](https://github.com/antiboredom/p5.riso) already exists and is a good tool. This project started from the wish to own the whole pipeline and to build it in the same spirit as my other image tools, Punch Card Studio (coming soon) and Pixel Picnic: paste in or load an image, get a physical-feeling result, keep every step visible. The second question was whether the same effect could be applied to a whole website.
 
 ### Treating riso as a process
 
@@ -121,6 +121,9 @@ Each commit adds one piece, so the history reads as the order the tool was built
 6. **renamed project to fluoro.** Named after the fluorescent inks riso is known for.
 7. **added screenshots and example outputs.** Captured from the running page.
 8. **documented how it works and the process behind it.** This README.
+9. **linked p5.riso and marked punch card studio as coming soon.** Small wording fix in the starting point section.
+10. **made reprint shift the whole print.** Reprint used to redraw only the grain, which was hard to see. It now also shifts the dot screens, picks a new registration direction and varies the ink density a little.
+11. **made ink on ink swap the two inks.** The button in the layout section did nothing before.
 
 ### Decisions and gotchas
 
@@ -148,7 +151,8 @@ The code was exercised in a headless DOM with a stubbed canvas, driving every sl
 | Threshold grain | Noise added to the threshold. It has no effect in random grain mode. |
 | Misregistration | Pixel offset of the second ink. Also drives the headline and the filter. |
 | Ink opacity | Alpha of each layer before multiply. |
-| Reprint | Draws new noise, like pulling another print. |
+| Reprint | Pulls another print: new noise, shifted screens, a new misregistration direction and slightly different ink density. |
+| Ink on ink | The button in the layout section. Swaps the two inks. |
 | Show original | Shows the source image instead of the print. |
 | Filter grain | Noise strength in the SVG filter demo. |
 

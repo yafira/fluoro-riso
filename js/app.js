@@ -41,8 +41,8 @@ function renderMain() {
   }
   var ch = channels();
   var layers = [
-    makeLayer(coverage(ch[0]), W, H, hexRgb(state.inkA), 15 + state.angle, nA, gA),
-    makeLayer(coverage(ch[1]), W, H, hexRgb(state.inkB), 75 + state.angle, nB, gB)
+    makeLayer(coverage(ch[0]), W, H, hexRgb(state.inkA), 15 + state.angle, nA, gA, state.phase[0]),
+    makeLayer(coverage(ch[1]), W, H, hexRgb(state.inkB), 75 + state.angle, nB, gB, state.phase[1])
   ];
   composite(out, W, H, layers);
 }
@@ -64,8 +64,8 @@ function initSwatch() {
 
 function renderSwatch() {
   var layers = [
-    makeLayer(sw.covA, sw.w, sw.h, hexRgb(state.inkA), 15 + state.angle, sw.nA, sw.gA),
-    makeLayer(sw.covB, sw.w, sw.h, hexRgb(state.inkB), 75 + state.angle, sw.nB, sw.gB)
+    makeLayer(sw.covA, sw.w, sw.h, hexRgb(state.inkA), 15 + state.angle, sw.nA, sw.gA, state.phase[0]),
+    makeLayer(sw.covB, sw.w, sw.h, hexRgb(state.inkB), 75 + state.angle, sw.nB, sw.gB, state.phase[1])
   ];
   composite($("swatch"), sw.w, sw.h, layers);
 }
@@ -74,7 +74,8 @@ function applyVars() {
   var r = document.documentElement.style;
   r.setProperty("--ink-a", state.inkA);
   r.setProperty("--ink-b", state.inkB);
-  r.setProperty("--mis", state.mis + "px");
+  r.setProperty("--mis-x", (state.mis * state.ax).toFixed(1) + "px");
+  r.setProperty("--mis-y", (state.mis * state.ay).toFixed(1) + "px");
   $("mock").classList.toggle("on", state.fon);
 }
 
@@ -141,8 +142,24 @@ Array.prototype.forEach.call(document.querySelectorAll("[data-a]"), function (b)
 });
 
 $("reprint").addEventListener("click", function () {
-  state.seed = Math.floor(Math.random() * 100000) + 1;
+  // another pull off the press: new noise, shifted screens, a new registration direction, slightly different ink density
+  var rnd = function (n) { return Math.floor(Math.random() * n); };
+  var a = Math.random() * Math.PI * 2;
+  state.seed = rnd(100000) + 1;
+  state.ax = Math.cos(a) * 1.1;
+  state.ay = Math.sin(a) * 1.1;
+  state.jit = Math.random() * 0.08 - 0.05;
+  state.phase = [[rnd(16), rnd(16)], [rnd(16), rnd(16)]];
   buildNoise();
+  schedule();
+});
+
+$("swap").addEventListener("click", function () {
+  var t = state.inkA;
+  state.inkA = state.inkB;
+  state.inkB = t;
+  $("inkA").value = state.inkA;
+  $("inkB").value = state.inkB;
   schedule();
 });
 

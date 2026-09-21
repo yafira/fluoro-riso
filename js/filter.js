@@ -27,7 +27,7 @@ function buildFilter() {
     '<filter id="riso" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">' +
     '<feFlood flood-color="' + PAPER + '" result="paper"/>' +
     inkFilter("A", ch[0], hexRgb(state.inkA), (state.seed * 3) % 997 + 1, 0, 0, gr) +
-    inkFilter("B", ch[1], hexRgb(state.inkB), (state.seed * 5) % 991 + 2, m, Math.round(m / 2), gr) +
+    inkFilter("B", ch[1], hexRgb(state.inkB), (state.seed * 5) % 991 + 2, Math.round(m * state.ax), Math.round(m * state.ay), gr) +
     '<feBlend in="inkA" in2="paper" mode="multiply" result="p1"/>' +
     '<feBlend in="inkB" in2="p1" mode="multiply"/>' +
     '</filter>';

@@ -4,7 +4,8 @@
   --paper: #f3f0e9;
   --text: #231f2b;
   --desk: #c2a07a;
-  --mis: 2px;
+  --mis-x: 2px;
+  --mis-y: 1px;
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -67,7 +68,7 @@ h1, h2, h3 {
   inset: 0;
   color: var(--ink-b);
   mix-blend-mode: multiply;
-  transform: translate(var(--mis), calc(var(--mis) * .5));
+  transform: translate(var(--mis-x), var(--mis-y));
   pointer-events: none;
 }
 
