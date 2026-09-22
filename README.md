@@ -115,25 +115,6 @@ Instead of chasing a look, the build follows what the machine does. Each part of
 
 An SVG filter is the fastest to apply to something you did not build, but it is heavy and only gives grain. Treating riso as a design language in CSS keeps text sharp and fast, but it only works on pages you control. Rendering the page to a canvas and running the image pipeline gives the best print quality, but the result is static. The page demonstrates all three, with CSS for the layout, the canvas pipeline for images, and the filter as an accent on one block. The demo block is a good example of the filter's limits.
 
-### Build log
-
-Each commit adds one piece, so the history reads as the order the tool was built in.
-
-1. **added page structure and riso layout styles.** Static markup and the stylesheet: the two-ink headline, multiply blending, and the paper grain overlay.
-2. **added canvas ink separation pipeline.** Coverage maps, three screens, tinting, overprint with misregistration, the press controls, image upload and the ink presets.
-3. **added svg filter for riso-fying live dom.** The filter builder and the mock shop page it is applied to.
-4. **added readme.**
-5. **updated headline to riso-fy (almost) anything.** The tool covers a lot, but not everything.
-6. **renamed project to fluoro.** Named after the fluorescent inks riso is known for.
-7. **added screenshots and example outputs.** Captured from the running page.
-8. **documented how it works and the process behind it.** This README.
-9. **linked p5.riso and marked punch card studio as coming soon.** Small wording fix in the starting point section.
-10. **made reprint shift the whole print.** Reprint used to redraw only the grain, which was hard to see. It now also shifts the dot screens, picks a new registration direction and varies the ink density a little.
-11. **made ink on ink swap the two inks.** The button in the layout section did nothing before.
-12. **aligned the press buttons and moved the print sliders under the image.** The buttons now share one height, the image shows at its native 640px, and the two columns end at about the same place.
-13. **made ink on ink also swap which ink prints which plate.** Swapping only the colors barely changed the image, because each ink follows the channel it absorbs. The button now trades the plates too, so the colors in the image trade places.
-14. **refreshed the readme screenshots and added a reprint figure.** The press panel and layout screenshots match the current layout, and a new figure shows a reprint and an ink swap.
-
 ### Decisions and gotchas
 
 - **A channel heuristic instead of a color solve.** Solving each pixel as a mix of arbitrary inks is more accurate, but matching each ink to the channel it absorbs already looks right and keeps the code short.
