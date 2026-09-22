@@ -2,7 +2,7 @@
 
 Riso-fy (almost) anything.
 
-![The Fluoro press panel: a halftoned landscape next to the controls for inks, screen, cell size, angle, contrast, grain, misregistration and ink opacity](docs/images/ui-press.png)
+![The Fluoro press panel: a halftoned landscape with the load, reprint and print-flaw controls underneath it, and the ink and screen settings beside it](docs/images/ui-press.png)
 
 Fluoro is a small toolkit for faking risograph prints in the browser. It rebuilds the print process instead of applying a filter: split an image into one layer per ink, turn each layer into a 1-bit screen, then overprint the layers on paper with a little misregistration and grain. It has no build step and no dependencies.
 
@@ -72,6 +72,12 @@ On a real riso machine each color is a separate pass, so the sheet never lines u
 
 Two inks can only reach the colors between them. With pink and blue the sun almost disappears, because orange and yellow have very little green or red to absorb. Orange and teal brings it back. Changing the inks is the biggest single change to a print.
 
+### Reprint and ink swap
+
+![Three prints of the same crop: the first pull, a reprint with shifted dots and a new offset direction, and the same pull with the inks swapped](docs/images/reprint.png)
+
+Reprint pulls another print from the same settings. It draws new grain, shifts each dot screen, picks a new misregistration direction and varies the ink density slightly, the way two pulls off a real press never match. Ink on ink swaps the two inks and which plate each one prints, so pink and blue trade places in the image and across the page.
+
 ## How the SVG filter works
 
 ![A mock shop page shown twice: the original, and the same markup after the SVG filter](docs/images/filter.png)
@@ -125,6 +131,8 @@ Each commit adds one piece, so the history reads as the order the tool was built
 10. **made reprint shift the whole print.** Reprint used to redraw only the grain, which was hard to see. It now also shifts the dot screens, picks a new registration direction and varies the ink density a little.
 11. **made ink on ink swap the two inks.** The button in the layout section did nothing before.
 12. **aligned the press buttons and moved the print sliders under the image.** The buttons now share one height, the image shows at its native 640px, and the two columns end at about the same place.
+13. **made ink on ink also swap which ink prints which plate.** Swapping only the colors barely changed the image, because each ink follows the channel it absorbs. The button now trades the plates too, so the colors in the image trade places.
+14. **refreshed the readme screenshots and added a reprint figure.** The press panel and layout screenshots match the current layout, and a new figure shows a reprint and an ink swap.
 
 ### Decisions and gotchas
 
@@ -153,7 +161,7 @@ The code was exercised in a headless DOM with a stubbed canvas, driving every sl
 | Misregistration | Pixel offset of the second ink. Also drives the headline and the filter. |
 | Ink opacity | Alpha of each layer before multiply. |
 | Reprint | Pulls another print: new noise, shifted screens, a new misregistration direction and slightly different ink density. |
-| Ink on ink | The button in the layout section. Swaps the two inks. |
+| Ink on ink | The button in the layout section. Swaps the two inks and which plate each one prints, so pink and blue trade places in the image and on the page. Press it again to swap back. |
 | Show original | Shows the source image instead of the print. |
 | Filter grain | Noise strength in the SVG filter demo. |
 
