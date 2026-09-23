@@ -6,9 +6,22 @@ const originals = new WeakMap();
 const listeners = new Set();
 let current = false;
 
-// the root element is the default target: a filter there doesn't break position: fixed children
+// safari (and every ios browser) is webkit without chrome. it drops an svg filter on the root
+// when the page has fixed elements, so there the body is printed instead
+export function needsBodyTarget() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  return /AppleWebKit/.test(ua) && (!/Chrome|Chromium/.test(ua) || /CriOS|FxiOS|EdgiOS/.test(ua));
+}
+
+// the whole page: the root element where possible, since a filter there keeps
+// position: fixed children fixed; the body in safari
+export function pageTarget() {
+  return needsBodyTarget() ? document.body : document.documentElement;
+}
+
 function resolveTargets(target) {
-  if (!target) return [document.documentElement];
+  if (!target) return [pageTarget()];
   if (typeof target === "string") return Array.from(document.querySelectorAll(target));
   if (target instanceof Element) return [target];
   return Array.from(target);
@@ -34,6 +47,7 @@ export function apply(options = {}) {
     if (!originals.has(el)) originals.set(el, el.style.filter);
     el.style.filter = url;
   });
+  if (!options.target) setPaper(options.paper || FILTER_DEFAULTS.paper);
   setState(true);
 }
 
@@ -42,7 +56,22 @@ export function remove(options = {}) {
     el.style.filter = originals.get(el) || "";
     originals.delete(el);
   });
+  if (!options.target) setPaper(null);
   setState(false);
+}
+
+// the canvas behind the page isn't part of any element, so it never gets filtered;
+// painting it paper-colored keeps short pages and margins from showing white
+let savedBackground = null;
+function setPaper(color) {
+  const root = document.documentElement.style;
+  if (color) {
+    if (savedBackground === null) savedBackground = root.backgroundColor;
+    root.backgroundColor = color;
+  } else if (savedBackground !== null) {
+    root.backgroundColor = savedBackground;
+    savedBackground = null;
+  }
 }
 
 export function toggle(options = {}) {

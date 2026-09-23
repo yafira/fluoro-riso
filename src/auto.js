@@ -29,7 +29,8 @@ function init() {
   const style = document.createElement("style");
   style.textContent = Fluoro.buttonStyles(options);
   document.head.appendChild(style);
-  document.body.appendChild(Fluoro.createButton(options));
+  // the button goes after <body>, outside anything that gets printed, so it stays fixed in safari
+  document.documentElement.appendChild(Fluoro.createButton(options));
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
