@@ -93,7 +93,7 @@ With the server-rendered markup, the page can switch to print with CSS alone: `h
 | `filterMarkup(options)` / `svgMarkup(options)` | The SVG filter as a string, with no DOM access. |
 | `onChange(fn)` | Called with `true` or `false` whenever the page is printed or restored. |
 
-The filter goes on the root element by default because that is the one place a CSS filter does not break `position: fixed` children. Safari drops a filter on the root when the page has fixed elements, so there Fluoro prints the body instead and keeps its own button outside it. In Safari, elements it draws on their own layer (fixed headers, animated elements) can escape the print. Images from other domains only work in `printImage` if they are served with CORS headers; the SVG filter works on everything the browser paints.
+The filter goes on the root element by default because that is the one place a CSS filter does not break `position: fixed` children. Safari and Firefox-based browsers drop a filter on the root when the page has fixed elements, so outside Chrome-based browsers Fluoro prints the body instead and keeps its own button outside it. There, fixed headers scroll with the page while it is printed, and elements the browser draws on their own layer (fixed or animated elements) can escape the print. Images from other domains only work in `printImage` if they are served with CORS headers; the SVG filter works on everything the browser paints.
 
 ## How the canvas pipeline works
 

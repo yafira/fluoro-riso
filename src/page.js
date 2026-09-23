@@ -6,16 +6,17 @@ const originals = new WeakMap();
 const listeners = new Set();
 let current = false;
 
-// safari (and every ios browser) is webkit without chrome. it drops an svg filter on the root
-// when the page has fixed elements, so there the body is printed instead
+// chrome-based browsers are the only ones that keep an svg filter on the root when the page
+// has fixed elements; safari and firefox-based browsers (like zen) drop it, so they print the body
 export function needsBodyTarget() {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
-  return /AppleWebKit/.test(ua) && (!/Chrome|Chromium/.test(ua) || /CriOS|FxiOS|EdgiOS/.test(ua));
+  const chromium = /Chrome|Chromium/.test(ua) && !/CriOS|EdgiOS|FxiOS/.test(ua);
+  return !chromium;
 }
 
-// the whole page: the root element where possible, since a filter there keeps
-// position: fixed children fixed; the body in safari
+// the whole page: the root element in chrome-based browsers, since a filter there keeps
+// position: fixed children fixed; the body everywhere else
 export function pageTarget() {
   return needsBodyTarget() ? document.body : document.documentElement;
 }
