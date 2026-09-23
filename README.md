@@ -19,6 +19,7 @@ Fluoro is a small toolkit for faking risograph prints in the browser. It rebuild
 
 - [Run it](#run-it)
 - [Three ways to get the look](#three-ways-to-get-the-look)
+- [Use it on your site](#use-it-on-your-site)
 - [How the canvas pipeline works](#how-the-canvas-pipeline-works)
 - [How the SVG filter works](#how-the-svg-filter-works)
 - [The process behind it](#the-process-behind-it)
@@ -46,6 +47,53 @@ The page demonstrates three approaches side by side, all driven by the same inks
 The CSS approach treats every element as a flat ink layer. Overlaps use `mix-blend-mode: multiply`, so pink over blue turns a deep indigo with no extra work.
 
 ![The layout demo: text, a button, and two overlapping ink discs that multiply where they cross, next to a halftone gradient swatch](docs/images/ui-layout.png)
+
+## Use it on your site
+
+Fluoro is also a package, `fluoro-riso`, so any site can riso-fy itself.
+
+### One script tag
+
+Add this and a Riso-fy button appears in the corner. Clicking it prints the whole page in two inks, and the choice is remembered on the next visit.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
+```
+
+Optional attributes on the script tag: `data-inks` (`pink-blue`, `orange-teal`, `green-purple`), `data-ink-a`, `data-ink-b`, `data-paper`, `data-grain`, `data-misregistration`, `data-target` (a selector, to print only some sections) and `data-button="false"` (to use your own button with `Fluoro.toggle()`).
+
+### From npm
+
+```sh
+npm install fluoro-riso
+```
+
+```js
+import { apply, remove, toggle, createButton, printImage, svgMarkup } from "fluoro-riso";
+
+// print the whole page, or only some elements
+apply({ inkA: "#ff6c2f", inkB: "#00838a" });
+apply({ target: ".hero" });
+
+// print an image with real halftone dots; returns a canvas
+const print = printImage(document.querySelector("img"), { screen: "halftone", cell: 6 });
+
+// server-rendered filter markup, for frameworks like next.js
+const html = svgMarkup({ inkA: "#ff48b0", inkB: "#0078bf" });
+```
+
+With the server-rendered markup, the page can switch to print with CSS alone: `html.print { filter: url(#fluoro-riso); }`.
+
+| Export | What it does |
+| --- | --- |
+| `apply(options)` / `remove(options)` / `toggle(options)` | Print or restore the page (default) or a `target` selector or element. |
+| `createButton(options)` | A ready-made toggle button. `remember: false` stops it saving the choice. |
+| `buttonStyles(options)` | Default CSS for that button, at zero specificity so sites can restyle it. |
+| `printImage(source, options)` | Runs the canvas pipeline on an image, canvas or video frame. |
+| `filterMarkup(options)` / `svgMarkup(options)` | The SVG filter as a string, with no DOM access. |
+| `onChange(fn)` | Called with `true` or `false` whenever the page is printed or restored. |
+
+The filter goes on the root element by default because that is the one place a CSS filter does not break `position: fixed` children. Images from other domains only work in `printImage` if they are served with CORS headers; the SVG filter works on everything the browser paints.
 
 ## How the canvas pipeline works
 
@@ -160,6 +208,9 @@ js/pipeline.js    ink layers (screen to 1-bit) and multiply compositing
 js/scene.js       built-in sample image, drawn with canvas paths
 js/filter.js      SVG filter builder
 js/app.js         source image, rendering, controls, wiring
+src/              the fluoro-riso package: filter, print pipeline, page toggle
+src/auto.js       entry for the script-tag build
+dist/fluoro.js    script-tag build, made with npm run bundle
 docs/images/      screenshots and figures used in this README
 ```
 
@@ -175,5 +226,6 @@ Scripts load in the order listed in `index.html` and share global scope, so keep
 
 - Export each separation as a black 1-bit PNG at 300 or 600 dpi for real riso printing.
 - Add a third ink layer.
-- Bookmarklet or extension that injects the filter into any page.
+- Browser extension that injects the filter into any page.
+- Move the site onto the package so both share one copy of the pipeline.
 - Pick a palette from the image (k-means) instead of using presets.

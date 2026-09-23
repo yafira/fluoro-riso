@@ -1,0 +1,45 @@
+{
+  "name": "fluoro-riso",
+  "version": "0.1.0",
+  "description": "Riso-fy (almost) anything: a two-ink risograph filter for live web pages and a canvas print pipeline for images.",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./auto": "./dist/fluoro.js",
+    "./package.json": "./package.json"
+  },
+  "unpkg": "./dist/fluoro.js",
+  "jsdelivr": "./dist/fluoro.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": [
+    "./dist/fluoro.js"
+  ],
+  "scripts": {
+    "bundle": "esbuild src/auto.js --bundle --minify --format=iife --target=es2018 --outfile=dist/fluoro.js",
+    "prepublishOnly": "npm run bundle"
+  },
+  "keywords": [
+    "riso",
+    "risograph",
+    "svg-filter",
+    "halftone",
+    "dither",
+    "print",
+    "canvas"
+  ],
+  "author": "Yafira Martinez",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yafira/fluoro-riso.git"
+  },
+  "homepage": "https://fluoro-riso.vercel.app",
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
