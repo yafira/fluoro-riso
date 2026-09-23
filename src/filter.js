@@ -16,8 +16,9 @@ export const FILTER_DEFAULTS = {
 };
 
 // invert the channel the ink absorbs, so 1 means full ink
+// alpha minus the channel, so transparent areas (most page backgrounds) count as paper, not black
 function invRows(ch) {
-  const r = [0, 0, 0, 0, 1];
+  const r = [0, 0, 0, 1, 0];
   r[ch] = -1;
   const row = r.join(" ");
   return `${row}  ${row}  ${row}  0 0 0 0 1`;
