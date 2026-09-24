@@ -1,10 +1,20 @@
 # Fluoro
 
+[![npm](https://img.shields.io/npm/v/fluoro-riso)](https://www.npmjs.com/package/fluoro-riso)
+
 Riso-fy (almost) anything.
 
 ![The Fluoro press panel: a halftoned landscape with the load, reprint and print-flaw controls underneath it, and the ink and screen settings beside it](docs/images/ui-press.png)
 
-Fluoro is a small toolkit for faking risograph prints in the browser. It rebuilds the print process instead of applying a filter: split an image into one layer per ink, turn each layer into a 1-bit screen, then overprint the layers on paper with a little misregistration and grain. It has no build step and no dependencies.
+Fluoro is a small toolkit for faking risograph prints in the browser. It rebuilds the print process instead of applying a filter: split an image into one layer per ink, turn each layer into a 1-bit screen, then overprint the layers on paper with a little misregistration and grain.
+
+You can use it two ways: as a tool at [fluoro-riso.vercel.app](https://fluoro-riso.vercel.app) for riso-fying your own images, or as a package that adds a Riso-fy button to any website with one line of HTML. The tool has no build step, and the package has no dependencies.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
+```
+
+See [Add it to your site](#add-it-to-your-site) for options, npm, and React.
 
 <table>
   <tr>
@@ -19,7 +29,7 @@ Fluoro is a small toolkit for faking risograph prints in the browser. It rebuild
 
 - [Run it](#run-it)
 - [Three ways to get the look](#three-ways-to-get-the-look)
-- [Use it on your site](#use-it-on-your-site)
+- [Add it to your site](#add-it-to-your-site)
 - [How the canvas pipeline works](#how-the-canvas-pipeline-works)
 - [How the SVG filter works](#how-the-svg-filter-works)
 - [The process behind it](#the-process-behind-it)
@@ -48,28 +58,51 @@ The CSS approach treats every element as a flat ink layer. Overlaps use `mix-ble
 
 ![The layout demo: text, a button, and two overlapping ink discs that multiply where they cross, next to a halftone gradient swatch](docs/images/ui-layout.png)
 
-## Use it on your site
+## Add it to your site
 
-Fluoro is also a package, `fluoro-riso`, so any site can riso-fy itself.
+Fluoro is on npm as [`fluoro-riso`](https://www.npmjs.com/package/fluoro-riso). It can print a whole page, chosen sections, or single images, and it works on sites you didn't build with it.
 
-### One script tag
+### With a script tag
 
-Add this and a Riso-fy button appears in the corner. Clicking it prints the whole page in two inks, and the choice is remembered on the next visit.
+No install needed. Paste this before the closing `</body>` tag:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
 ```
 
-Optional attributes on the script tag: `data-inks` (`pink-blue`, `orange-teal`, `green-purple`), `data-ink-a`, `data-ink-b`, `data-paper`, `data-grain`, `data-misregistration`, `data-target` (a selector, to print only some sections) and `data-button="false"` (to use your own button with `Fluoro.toggle()`).
+A Riso-fy button appears in the bottom-right corner. Clicking it prints the page in two inks, and clicking Show original restores it. The choice is remembered on the next visit. Text stays live, so links, forms and text selection keep working while the page is printed.
 
-### From npm
+Settings go on the script tag as attributes:
+
+| Attribute | What it does | Example |
+| --- | --- | --- |
+| `data-inks` | Picks an ink preset: `pink-blue` (default), `orange-teal` or `green-purple`. | `data-inks="orange-teal"` |
+| `data-ink-a`, `data-ink-b` | Sets each ink to any color, overriding the preset. | `data-ink-a="#ff48b0"` |
+| `data-paper` | Sets the paper color. | `data-paper="#fdf6e3"` |
+| `data-grain` | Sets the grain strength. The default is `1.5`. | `data-grain="1"` |
+| `data-misregistration` | Sets how far the second ink is offset, in pixels. The default is `2`. | `data-misregistration="4"` |
+| `data-target` | Prints only the elements matching a CSS selector instead of the whole page. | `data-target=".hero"` |
+| `data-button` | `"false"` hides the corner button, so you can use your own. | `data-button="false"` |
+
+To use your own button, hide the default one and call `Fluoro.toggle()`:
+
+```html
+<button type="button" onclick="Fluoro.toggle()">Print this page</button>
+<script src="https://cdn.jsdelivr.net/npm/fluoro-riso" data-button="false" defer></script>
+```
+
+The corner button is styled at zero specificity, so any rule for `.fluoro-button` in your own CSS overrides it.
+
+To lock a version so updates never change your site, add it to the URL: `https://cdn.jsdelivr.net/npm/fluoro-riso@0.1`.
+
+### With npm
 
 ```sh
 npm install fluoro-riso
 ```
 
 ```js
-import { apply, remove, toggle, createButton, printImage, svgMarkup } from "fluoro-riso";
+import { apply, remove, toggle, printImage } from "fluoro-riso";
 
 // print the whole page, or only some elements
 apply({ inkA: "#ff6c2f", inkB: "#00838a" });
@@ -77,23 +110,50 @@ apply({ target: ".hero" });
 
 // print an image with real halftone dots; returns a canvas
 const print = printImage(document.querySelector("img"), { screen: "halftone", cell: 6 });
-
-// server-rendered filter markup, for frameworks like next.js
-const html = svgMarkup({ inkA: "#ff48b0", inkB: "#0078bf" });
 ```
 
-With the server-rendered markup, the page can switch to print with CSS alone: `html.print { filter: url(#fluoro-riso); }`.
+In React or Next.js, call it from a client component:
+
+```jsx
+"use client";
+
+import { toggle } from "fluoro-riso";
+
+export default function RisoButton() {
+  return (
+    <button type="button" onClick={() => toggle()}>
+      Riso-fy
+    </button>
+  );
+}
+```
+
+The package doesn't touch the page until you call it, so importing it during server rendering is safe.
 
 | Export | What it does |
 | --- | --- |
-| `apply(options)` / `remove(options)` / `toggle(options)` | Print or restore the page (default) or a `target` selector or element. |
+| `apply(options)` / `remove(options)` / `toggle(options)` | Print or restore the whole page, or a `target` selector or element. |
+| `isOn()` / `onChange(fn)` | Read whether the page is printed, or get called with `true` or `false` when it changes. |
 | `createButton(options)` | A ready-made toggle button. `remember: false` stops it saving the choice. |
-| `buttonStyles(options)` | Default CSS for that button, at zero specificity so sites can restyle it. |
+| `buttonStyles(options)` | Default CSS for that button. |
 | `printImage(source, options)` | Runs the canvas pipeline on an image, canvas or video frame. |
-| `filterMarkup(options)` / `svgMarkup(options)` | The SVG filter as a string, with no DOM access. |
-| `onChange(fn)` | Called with `true` or `false` whenever the page is printed or restored. |
+| `filterMarkup(options)` / `svgMarkup(options)` | The SVG filter as a string, with no DOM access, for server rendering or custom setups. |
+| `INKS` / `PAPER` | The ink presets and the default paper color. |
 
-The filter goes on the root element by default because that is the one place a CSS filter does not break `position: fixed` children. Safari and Firefox-based browsers drop a filter on the root when the page has fixed elements, so outside Chrome-based browsers Fluoro prints the body instead and keeps its own button outside it. There, fixed headers scroll with the page while it is printed, and elements the browser draws on their own layer (fixed or animated elements) can escape the print. Images from other domains only work in `printImage` if they are served with CORS headers; the SVG filter works on everything the browser paints.
+Options use the same names as the script-tag attributes, in camel case: `inkA`, `inkB`, `paper`, `grain`, `misregistration` and `target`.
+
+### Browser support
+
+Printing a whole page works in all current browsers, but how it handles fixed elements differs:
+
+| Browser | What gets printed | Fixed headers and sticky elements |
+| --- | --- | --- |
+| Chrome, Edge, Arc, Brave | The whole page, from the root element | Stay fixed and are printed too |
+| Safari, Firefox, Zen, and all iOS browsers | The page body | Scroll with the page while it is printed, and some fixed or animated elements keep their original colors |
+
+The difference comes from how browsers draw fixed elements: Safari and Firefox drop a filter on the root element when the page contains one, so outside Chrome-based browsers Fluoro prints the body and keeps its own button outside it.
+
+`printImage` can only read images from your own site, or from other sites that send CORS headers. The page filter works on everything the browser draws.
 
 ## How the canvas pipeline works
 
@@ -177,7 +237,7 @@ An SVG filter is the fastest to apply to something you did not build, but it is 
 
 ### How it was checked
 
-The code was exercised in a headless DOM with a stubbed canvas, driving every slider, screen, preset and toggle. All screenshots and figures in `docs/images` were captured from the running page in headless Chromium, and the pipeline figures were produced by calling the page's own functions, so they show the real output.
+The code was exercised in a headless DOM with a stubbed canvas, driving every slider, screen, preset and toggle. All screenshots and figures in `docs/images` were captured from the running page in headless Chromium, and the pipeline figures were produced by calling the page's own functions, so they show the real output. The package's page printing was checked in headless Chromium and WebKit, and by hand in Chrome, Safari and Zen.
 
 ## Settings
 
@@ -218,7 +278,8 @@ Scripts load in the order listed in `index.html` and share global scope, so keep
 
 ## Limits
 
-- The SVG filter re-runs on every repaint, so it is best on a section rather than a whole site. Safari is the least reliable with large filtered elements. A filter on a parent also changes how `position: fixed` children behave.
+- The SVG filter re-runs on every repaint, so long pages with many animations can scroll less smoothly while printed. Use `target` to print only some sections if that happens.
+- Outside Chrome-based browsers, fixed headers scroll with the page while it is printed. See [Browser support](#browser-support).
 - The filter produces grain rather than true halftone dots. Use the canvas pipeline when you need dots.
 - Two inks cannot reproduce every color. Pick inks that suit the image.
 
