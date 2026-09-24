@@ -20,6 +20,7 @@
     "./dist/fluoro.js"
   ],
   "scripts": {
+    "dev": "esbuild src/auto.js --bundle --format=iife --target=es2018 --outfile=dist/fluoro.js --servedir=. --serve=5173",
     "bundle": "esbuild src/auto.js --bundle --minify --format=iife --target=es2018 --outfile=dist/fluoro.js",
     "prepublishOnly": "npm run bundle"
   },

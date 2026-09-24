@@ -40,7 +40,9 @@ See [Add it to your site](#add-it-to-your-site) for options, npm, and React.
 
 ## Run it
 
-Open `index.html` in a browser. The scripts are plain classic scripts, so it works from `file://`. Fonts load from Google Fonts and fall back to system fonts when offline.
+Open `index.html` in a browser. The scripts are plain classic scripts, so it works from `file://`.
+
+To work on the package too, run `npm install` once, then `npm run dev` and open http://127.0.0.1:5173. That serves the site and rebuilds `dist/fluoro.js` on every reload, so changes in `src/` show up without running the bundle by hand. Fonts load from Google Fonts and fall back to system fonts when offline.
 
 Use **Load your image** to try your own photo. Images are downscaled to 640px on the long side and never leave the browser.
 
