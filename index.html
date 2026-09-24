@@ -1,141 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fluoro: riso-fy (almost) anything</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Fluoro: riso-fy (almost) anything</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Fluoro" />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute"
+      aria-hidden="true"
+      focusable="false"
+      id="filterHost"
+    ></svg>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false" id="filterHost"></svg>
+    <main class="sheet">
+      <h1 class="riso-text" data-text="Riso-fy (almost) anything">
+        Riso-fy (almost) anything
+      </h1>
+      <p class="lede">
+        Two inks, one sheet of paper. Load an image, then push the sliders to
+        see how each print flaw changes the look. The same settings drive the
+        page layout and the filter demo further down.
+      </p>
 
-<main class="sheet">
-  <h1 class="riso-text" data-text="Riso-fy (almost) anything">Riso-fy (almost) anything</h1>
-  <p class="lede">Two inks, one sheet of paper. Load an image, then push the sliders to see how each print flaw changes the look. The same settings drive the page layout and the filter demo further down.</p>
-
-  <div class="press">
-    <div class="stage-col">
-      <div class="frame"><canvas id="out" aria-label="Riso print preview"></canvas></div>
-      <div class="actions">
-        <label class="file"><input type="file" id="file" accept="image/*"><span class="btn solid">Load your image</span></label>
-        <button class="btn" type="button" id="reprint">Reprint</button>
-        <label class="check"><input type="checkbox" id="orig"> Show original</label>
-      </div>
-      <div class="flaws">
-        <div class="row">
-          <label for="grain">Threshold grain <output id="grainO"></output></label>
-          <input type="range" id="grain" min="0" max="0.4" step="0.01" value="0.08">
+      <div class="press">
+        <div class="stage-col">
+          <div class="frame">
+            <canvas id="out" aria-label="Riso print preview"></canvas>
+          </div>
+          <div class="actions">
+            <label class="file"
+              ><input type="file" id="file" accept="image/*" /><span
+                class="btn solid"
+                >Load your image</span
+              ></label
+            >
+            <button class="btn" type="button" id="reprint">Reprint</button>
+            <label class="check"
+              ><input type="checkbox" id="orig" /> Show original</label
+            >
+          </div>
+          <div class="flaws">
+            <div class="row">
+              <label for="grain"
+                >Threshold grain <output id="grainO"></output
+              ></label>
+              <input
+                type="range"
+                id="grain"
+                min="0"
+                max="0.4"
+                step="0.01"
+                value="0.08"
+              />
+            </div>
+            <div class="row">
+              <label for="mis"
+                >Misregistration <output id="misO"></output
+              ></label>
+              <input type="range" id="mis" min="0" max="8" step="1" value="2" />
+            </div>
+            <div class="row">
+              <label for="opacity"
+                >Ink opacity <output id="opacityO"></output
+              ></label>
+              <input
+                type="range"
+                id="opacity"
+                min="0.6"
+                max="1"
+                step="0.01"
+                value="0.92"
+              />
+            </div>
+          </div>
         </div>
-        <div class="row">
-          <label for="mis">Misregistration <output id="misO"></output></label>
-          <input type="range" id="mis" min="0" max="8" step="1" value="2">
+
+        <div class="panel">
+          <h3>Press settings</h3>
+
+          <div class="row">
+            <span class="lab">Inks (they recolor this whole page)</span>
+            <div class="inks">
+              <input
+                type="color"
+                id="inkA"
+                value="#ff48b0"
+                aria-label="Ink A color"
+              />
+              <input
+                type="color"
+                id="inkB"
+                value="#0078bf"
+                aria-label="Ink B color"
+              />
+            </div>
+            <div class="presets">
+              <button
+                class="btn"
+                type="button"
+                data-a="#ff48b0"
+                data-b="#0078bf"
+              >
+                Pink + blue
+              </button>
+              <button
+                class="btn"
+                type="button"
+                data-a="#ff6c2f"
+                data-b="#00838a"
+              >
+                Orange + teal
+              </button>
+              <button
+                class="btn"
+                type="button"
+                data-a="#00a95c"
+                data-b="#765ba7"
+              >
+                Green + purple
+              </button>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="mode">Screen</label>
+            <select id="mode">
+              <option value="halftone">Halftone dots</option>
+              <option value="bayer">Bayer dither</option>
+              <option value="noise">Random grain</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="cell">Cell size <output id="cellO"></output></label>
+            <input type="range" id="cell" min="3" max="14" step="1" value="6" />
+          </div>
+          <div class="row">
+            <label for="angle"
+              >Screen angle <output id="angleO"></output
+            ></label>
+            <input
+              type="range"
+              id="angle"
+              min="0"
+              max="90"
+              step="1"
+              value="0"
+            />
+          </div>
+          <div class="row">
+            <label for="contrast"
+              >Contrast <output id="contrastO"></output
+            ></label>
+            <input
+              type="range"
+              id="contrast"
+              min="0.6"
+              max="2"
+              step="0.05"
+              value="1.2"
+            />
+          </div>
+
+          <p class="note">
+            Each ink is matched to the color channel it absorbs most, so pink
+            reads the green channel and blue reads the red one. Images stay in
+            your browser.
+          </p>
         </div>
-        <div class="row">
-          <label for="opacity">Ink opacity <output id="opacityO"></output></label>
-          <input type="range" id="opacity" min="0.6" max="1" step="0.01" value="0.92">
+      </div>
+
+      <section>
+        <h2>Layout built like a print</h2>
+        <div class="two">
+          <div>
+            <p>
+              Every element is a flat ink layer. Overlaps use multiply, so pink
+              over blue turns purple with no extra work. The headline above is
+              one word printed twice, the second pass nudged by the
+              misregistration slider.
+            </p>
+            <p>
+              Photos go through the canvas pipeline once. Everything else stays
+              live text, so it remains sharp, selectable, and cheap to scroll.
+            </p>
+            <p>
+              <button
+                class="btn solid"
+                type="button"
+                id="swap"
+                title="Swap the two inks"
+              >
+                Ink on ink
+              </button>
+            </p>
+          </div>
+          <div class="stage" aria-hidden="true">
+            <div class="disc a"></div>
+            <div class="disc b"></div>
+            <canvas id="swatch"></canvas>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="panel">
-      <h3>Press settings</h3>
+      <section>
+        <h2>Filter the live page</h2>
+        <p>
+          An SVG filter can riso-fy whatever the browser paints. It splits the
+          block into two inks, thresholds each with noise, tints them, and
+          multiplies them onto paper. It works on any markup, but it re-runs on
+          every repaint, so it suits a hero or a section better than a whole
+          site.
+        </p>
 
-      <div class="row">
-        <span class="lab">Inks (they recolor this whole page)</span>
-        <div class="inks">
-          <input type="color" id="inkA" value="#ff48b0" aria-label="Ink A color">
-          <input type="color" id="inkB" value="#0078bf" aria-label="Ink B color">
+        <div class="mock-wrap">
+          <div class="mock-controls">
+            <label class="check"
+              ><input type="checkbox" id="fon" checked /> Apply SVG
+              filter</label
+            >
+            <div class="row">
+              <label for="fgrain"
+                >Filter grain <output id="fgrainO"></output
+              ></label>
+              <input
+                type="range"
+                id="fgrain"
+                min="0.5"
+                max="3"
+                step="0.1"
+                value="1.5"
+              />
+            </div>
+          </div>
+
+          <div class="mock" id="mock">
+            <div class="mock-nav">
+              <b>Sunday Market</b><span>Shop</span><span>Journal</span
+              ><span>About</span>
+            </div>
+            <div class="mock-hero">
+              <h3>Fresh things, printed slowly.</h3>
+              <p>
+                Small batches of ceramics, textiles, and paper goods from
+                studios around the city.
+              </p>
+              <span class="mbtn">Browse the shop</span>
+            </div>
+            <div class="mock-grid">
+              <div class="swatch-a">
+                <strong>Ceramics</strong>Hand-thrown mugs and bowls
+              </div>
+              <div class="swatch-b">
+                <strong>Textiles</strong>Woven and knitted small goods
+              </div>
+              <div class="swatch-c">
+                <strong>Paper</strong>Zines, cards, and prints
+              </div>
+            </div>
+          </div>
+          <p class="note">
+            Filters on large or animated areas can be slow, and Safari is the
+            least reliable at it. A filter on a parent also changes how
+            fixed-position children behave, so test sticky headers.
+          </p>
         </div>
-        <div class="presets">
-          <button class="btn" type="button" data-a="#ff48b0" data-b="#0078bf">Pink + blue</button>
-          <button class="btn" type="button" data-a="#ff6c2f" data-b="#00838a">Orange + teal</button>
-          <button class="btn" type="button" data-a="#00a95c" data-b="#765ba7">Green + purple</button>
-        </div>
-      </div>
+      </section>
+    </main>
 
-      <div class="row">
-        <label for="mode">Screen</label>
-        <select id="mode">
-          <option value="halftone">Halftone dots</option>
-          <option value="bayer">Bayer dither</option>
-          <option value="noise">Random grain</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <label for="cell">Cell size <output id="cellO"></output></label>
-        <input type="range" id="cell" min="3" max="14" step="1" value="6">
-      </div>
-      <div class="row">
-        <label for="angle">Screen angle <output id="angleO"></output></label>
-        <input type="range" id="angle" min="0" max="90" step="1" value="0">
-      </div>
-      <div class="row">
-        <label for="contrast">Contrast <output id="contrastO"></output></label>
-        <input type="range" id="contrast" min="0.6" max="2" step="0.05" value="1.2">
-      </div>
-
-      <p class="note">Each ink is matched to the color channel it absorbs most, so pink reads the green channel and blue reads the red one. Images stay in your browser.</p>
-    </div>
-  </div>
-
-  <section>
-    <h2>Layout built like a print</h2>
-    <div class="two">
-      <div>
-        <p>Every element is a flat ink layer. Overlaps use multiply, so pink over blue turns purple with no extra work. The headline above is one word printed twice, the second pass nudged by the misregistration slider.</p>
-        <p>Photos go through the canvas pipeline once. Everything else stays live text, so it remains sharp, selectable, and cheap to scroll.</p>
-        <p><button class="btn solid" type="button" id="swap" title="Swap the two inks">Ink on ink</button></p>
-      </div>
-      <div class="stage" aria-hidden="true">
-        <div class="disc a"></div>
-        <div class="disc b"></div>
-        <canvas id="swatch"></canvas>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Filter the live page</h2>
-    <p>An SVG filter can riso-fy whatever the browser paints. It splits the block into two inks, thresholds each with noise, tints them, and multiplies them onto paper. It works on any markup, but it re-runs on every repaint, so it suits a hero or a section better than a whole site.</p>
-
-    <div class="mock-wrap">
-      <div class="mock-controls">
-        <label class="check"><input type="checkbox" id="fon" checked> Apply SVG filter</label>
-        <div class="row">
-          <label for="fgrain">Filter grain <output id="fgrainO"></output></label>
-          <input type="range" id="fgrain" min="0.5" max="3" step="0.1" value="1.5">
-        </div>
-      </div>
-
-      <div class="mock" id="mock">
-        <div class="mock-nav"><b>Sunday Market</b><span>Shop</span><span>Journal</span><span>About</span></div>
-        <div class="mock-hero">
-          <h3>Fresh things, printed slowly.</h3>
-          <p>Small batches of ceramics, textiles, and paper goods from studios around the city.</p>
-          <span class="mbtn">Browse the shop</span>
-        </div>
-        <div class="mock-grid">
-          <div class="swatch-a"><strong>Ceramics</strong>Hand-thrown mugs and bowls</div>
-          <div class="swatch-b"><strong>Textiles</strong>Woven and knitted small goods</div>
-          <div class="swatch-c"><strong>Paper</strong>Zines, cards, and prints</div>
-        </div>
-      </div>
-      <p class="note">Filters on large or animated areas can be slow, and Safari is the least reliable at it. A filter on a parent also changes how fixed-position children behave, so test sticky headers.</p>
-    </div>
-  </section>
-</main>
-
-<script src="js/util.js"></script>
-<script src="js/state.js"></script>
-<script src="js/screens.js"></script>
-<script src="js/pipeline.js"></script>
-<script src="js/scene.js"></script>
-<script src="js/filter.js"></script>
-<script src="js/app.js"></script>
-</body>
+    <script src="js/util.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/screens.js"></script>
+    <script src="js/pipeline.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/filter.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>
