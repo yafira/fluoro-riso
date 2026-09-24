@@ -42,10 +42,17 @@ export function mount(options = {}) {
   return svg;
 }
 
-// mode "lite" lays blend layers over the page instead of filtering it: faster,
-// works with fixed elements everywhere, but grain and tint rather than real separations
+// lite is the default page print: blend layers over the page instead of a filter,
+// fast and fine with fixed elements everywhere, but a tint rather than real
+// separations. the svg filter runs with mode "filter", or when a target is given,
+// since lite always covers the whole screen
+export function isLite(options = {}) {
+  if (options.mode) return options.mode === "lite";
+  return !options.target;
+}
+
 export function apply(options = {}) {
-  if (options.mode === "lite") {
+  if (isLite(options)) {
     applyLite(options);
     setState(true);
     return;
@@ -61,7 +68,7 @@ export function apply(options = {}) {
 }
 
 export function remove(options = {}) {
-  if (options.mode === "lite") {
+  if (isLite(options)) {
     removeLite();
     setState(false);
     return;

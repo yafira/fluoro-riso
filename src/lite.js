@@ -11,7 +11,7 @@ export const LITE_DEFAULTS = {
   inkB: INKS["pink-blue"][1],
   paper: PAPER,
   mids: 0.7,
-  grain: 0.05,
+  grain: 1.5,
   desaturate: false,
   seed: 1,
   zIndex: 2147482000
@@ -19,7 +19,8 @@ export const LITE_DEFAULTS = {
 
 const CLASS = "fluoro-lite-layer";
 
-// a small transparent tile with ink-colored specks, repeated across the screen
+// a small transparent tile with ink-colored specks, repeated across the screen.
+// grain uses the same scale as the filter (1.5 by default), so 1.5 means 5% specks
 function grainTile(color, density, seed) {
   const size = 180;
   const c = document.createElement("canvas");
@@ -59,7 +60,7 @@ function layers(o) {
   const list = [
     `background:${o.inkA};mix-blend-mode:overlay;opacity:${o.mids}`,
     `background:${overprint(o.inkA, o.inkB)};mix-blend-mode:screen`,
-    `background-color:${o.paper};background-image:url(${grainTile(o.inkA, o.grain, o.seed)});mix-blend-mode:multiply`
+    `background-color:${o.paper};background-image:url(${grainTile(o.inkA, o.grain / 30, o.seed)});mix-blend-mode:multiply`
   ];
   if (o.desaturate) list.unshift("background:#808080;mix-blend-mode:saturation");
   return list;

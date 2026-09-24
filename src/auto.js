@@ -1,6 +1,6 @@
 // script-tag build: <script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
 // optional attributes: data-inks="orange-teal", data-ink-a, data-ink-b, data-paper, data-grain,
-// data-misregistration, data-target, data-mode="lite", data-button="false"
+// data-mode="filter", data-misregistration, data-target, data-button="false"
 
 import * as Fluoro from "./index.js";
 import { INKS } from "./defaults.js";

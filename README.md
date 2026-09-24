@@ -34,7 +34,7 @@ No install needed. Paste this before the closing `</body>` tag:
 <script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
 ```
 
-A Riso-fy button appears in the bottom-right corner. Clicking it prints the page in two inks, and clicking Show original restores it. The choice is remembered on the next visit. Text stays live, so links, forms and text selection keep working while the page is printed.
+A Riso-fy button appears in the bottom-right corner. Clicking it prints the page in two inks, pink and blue unless you pick others, and clicking Show original restores it. The choice is remembered on the next visit. Text stays live, so links, forms and text selection keep working while the page is printed.
 
 Settings go on the script tag as attributes:
 
@@ -43,10 +43,10 @@ Settings go on the script tag as attributes:
 | `data-inks` | Picks an ink preset: `pink-blue` (default), `orange-teal` or `green-purple`. | `data-inks="orange-teal"` |
 | `data-ink-a`, `data-ink-b` | Sets each ink to any color, overriding the preset. | `data-ink-a="#ff48b0"` |
 | `data-paper` | Sets the paper color. | `data-paper="#fdf6e3"` |
-| `data-grain` | Sets the grain strength. The default is `1.5`. | `data-grain="1"` |
-| `data-misregistration` | Sets how far the second ink is offset, in pixels. The default is `2`. | `data-misregistration="4"` |
-| `data-mode` | `"lite"` uses the fast blend-layer print instead of the SVG filter. See [Lite mode](#lite-mode). | `data-mode="lite"` |
-| `data-target` | Prints only the elements matching a CSS selector instead of the whole page. | `data-target=".hero"` |
+| `data-grain` | Sets the grain strength. The default is `1.5`; lower is cleaner. | `data-grain="1"` |
+| `data-mode` | `"filter"` swaps the fast default print for the SVG filter, with real 1-bit separations and misregistration. See [Two print modes](#two-print-modes). | `data-mode="filter"` |
+| `data-misregistration` | Sets how far the second ink is offset, in pixels, in filter mode. The default is `2`. | `data-misregistration="4"` |
+| `data-target` | Prints only the elements matching a CSS selector instead of the whole page. This uses filter mode. | `data-target=".hero"` |
 | `data-button` | `"false"` hides the corner button, so you can use your own. | `data-button="false"` |
 
 To use your own button, hide the default one and call `Fluoro.toggle()`:
@@ -69,7 +69,7 @@ npm install fluoro-riso
 ```js
 import { apply, remove, toggle, printImage } from "fluoro-riso";
 
-// print the whole page, or only some elements
+// print the whole page in your own inks, or only some elements
 apply({ inkA: "#ff6c2f", inkB: "#00838a" });
 apply({ target: ".hero" });
 
@@ -106,23 +106,29 @@ The package doesn't touch the page until you call it, so importing it during ser
 | `applyLite(options)` / `removeLite()` | Lite mode on its own, without the page state. |
 | `INKS` / `PAPER` | The ink presets and the default paper color. |
 
-Options use the same names as the script-tag attributes, in camel case: `inkA`, `inkB`, `paper`, `grain`, `misregistration`, `mode` and `target`.
+Options use the same names as the script-tag attributes, in camel case: `inkA`, `inkB`, `paper`, `grain`, `mode`, `misregistration` and `target`.
 
-### Lite mode
+### Two print modes
 
-The default print runs an SVG filter over the page, which gives real 1-bit separations but re-runs on every repaint, so long or animated pages can scroll slowly. Lite mode lays three fixed blend layers over the page instead: it pushes the midtones toward ink A, turns the darks into the overprint color of both inks, and puts everything on paper with a scatter of ink A grain. Nothing on the page is filtered, and all three blend modes run on the GPU, so scrolling stays fast and fixed headers keep working in every browser.
+**Lite** is the default. It lays three fixed blend layers over the page: it pushes the midtones toward ink A, turns the darks into the overprint color of both inks, and puts everything on paper with a scatter of ink A grain. Nothing on the page is filtered, and all three blend modes run on the GPU, so scrolling stays fast, videos and animations keep playing smoothly, and fixed headers keep working in every browser. It's a tint rather than a true separation, so it has no misregistration or halftone dots.
+
+**Filter** runs an SVG filter over the page instead, with real 1-bit separations, grain and misregistration. It re-runs on every repaint, so long or animated pages can scroll slowly, and Safari and Firefox print the body rather than the whole page (see [Browser support](#browser-support)). It's also what prints single sections with `target`.
 
 ```js
-apply({ mode: "lite" });
+apply();                   // lite
+apply({ mode: "filter" }); // svg filter
+apply({ target: ".hero" }); // filter, on that section only
 ```
 
-Lite mode is a tint rather than a true separation, so it has no misregistration or halftone dots. Anything with a `z-index` above `2147482000` sits above the layers and stays unprinted, which is how the Riso-fy button stays in its own colors; a site's own toggle button can do the same. Lite options: `inkA`, `inkB`, `paper`, `mids` (how strongly the midtones take ink A, default `0.7`), `grain` (speck density, default `0.05`), `desaturate` and `zIndex`.
+In lite mode, anything with a `z-index` above `2147482000` sits above the layers and stays unprinted, which is how the Riso-fy button stays in its own colors; a site's own toggle button can do the same. Lite options: `inkA`, `inkB`, `paper`, `mids` (how strongly the midtones take ink A, default `0.7`), `grain` (default `1.5`), `desaturate` and `zIndex`.
 
 `desaturate: true` adds a fourth layer that strips the page's own colors first, which helps very colorful sites print cleanly in two inks. It uses the `saturation` blend mode, which Safari draws in software, so leave it off on long or animated pages.
 
 ### Browser support
 
-Printing a whole page works in all current browsers, but how it handles fixed elements differs:
+Lite mode, the default, prints the whole page the same way in every current browser, with fixed headers staying fixed.
+
+Filter mode also works everywhere, but how it handles fixed elements differs:
 
 | Browser | What gets printed | Fixed headers and sticky elements |
 | --- | --- | --- |
@@ -131,7 +137,7 @@ Printing a whole page works in all current browsers, but how it handles fixed el
 
 The difference comes from how browsers draw fixed elements: Safari and Firefox drop a filter on the root element when the page contains one, so outside Chrome-based browsers Fluoro prints the body and keeps its own button outside it.
 
-`printImage` can only read images from your own site, or from other sites that send CORS headers. The page filter works on everything the browser draws.
+`printImage` can only read images from your own site, or from other sites that send CORS headers. Both page modes work on everything the browser draws, including video.
 
 ## Try the tool
 
@@ -143,14 +149,14 @@ To run it locally, open `index.html` in a browser; it works from `file://`. To w
 
 ## How it works
 
-Each ink is matched to the color channel it absorbs, that channel becomes a coverage map, the map is screened to 1-bit with halftone dots, a Bayer dither or grain, and the layers are multiplied onto paper with the second ink slightly offset. The page print does the same separation inside an SVG filter, and lite mode approximates it with blend layers.
+Each ink is matched to the color channel it absorbs, that channel becomes a coverage map, the map is screened to 1-bit with halftone dots, a Bayer dither or grain, and the layers are multiplied onto paper with the second ink slightly offset. Filter mode does the same separation on the page inside an SVG filter, and lite mode, the default, approximates it with blend layers.
 
 The full write-up, with figures for every stage, the decisions behind it, the tool's settings and the project structure, is in [How Fluoro works](https://github.com/yafira/fluoro-riso/blob/main/docs/process.md).
 
 ## Limits
 
-- The SVG filter re-runs on every repaint, so long pages with many animations can scroll less smoothly while printed. Use [lite mode](#lite-mode), or `target` to print only some sections, if that happens.
-- Outside Chrome-based browsers, fixed headers scroll with the page while it is printed. See [Browser support](#browser-support).
+- Filter mode re-runs on every repaint, so long pages with many animations can scroll less smoothly while printed. Lite mode, the default, doesn't have this problem.
+- In filter mode, outside Chrome-based browsers, fixed headers scroll with the page while it is printed. See [Browser support](#browser-support).
 - The filter produces grain rather than true halftone dots. Use the canvas pipeline when you need dots.
 - Two inks cannot reproduce every color. Pick inks that suit the image.
 
