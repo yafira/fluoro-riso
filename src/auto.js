@@ -1,6 +1,6 @@
 // script-tag build: <script src="https://cdn.jsdelivr.net/npm/fluoro-riso" defer></script>
 // optional attributes: data-inks="orange-teal", data-ink-a, data-ink-b, data-paper, data-grain,
-// data-misregistration, data-target, data-button="false"
+// data-misregistration, data-target, data-mode="lite", data-button="false"
 
 import * as Fluoro from "./index.js";
 import { INKS } from "./defaults.js";
@@ -14,6 +14,7 @@ if (d.paper) options.paper = d.paper;
 if (d.grain) options.grain = parseFloat(d.grain);
 if (d.misregistration) options.misregistration = parseFloat(d.misregistration);
 if (d.target) options.target = d.target;
+if (d.mode) options.mode = d.mode;
 
 // page helpers use the script-tag settings unless a call passes its own
 window.Fluoro = {

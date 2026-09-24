@@ -83,6 +83,7 @@ Settings go on the script tag as attributes:
 | `data-paper` | Sets the paper color. | `data-paper="#fdf6e3"` |
 | `data-grain` | Sets the grain strength. The default is `1.5`. | `data-grain="1"` |
 | `data-misregistration` | Sets how far the second ink is offset, in pixels. The default is `2`. | `data-misregistration="4"` |
+| `data-mode` | `"lite"` uses the fast blend-layer print instead of the SVG filter. See [Lite mode](#lite-mode). | `data-mode="lite"` |
 | `data-target` | Prints only the elements matching a CSS selector instead of the whole page. | `data-target=".hero"` |
 | `data-button` | `"false"` hides the corner button, so you can use your own. | `data-button="false"` |
 
@@ -140,9 +141,20 @@ The package doesn't touch the page until you call it, so importing it during ser
 | `buttonStyles(options)` | Default CSS for that button. |
 | `printImage(source, options)` | Runs the canvas pipeline on an image, canvas or video frame. |
 | `filterMarkup(options)` / `svgMarkup(options)` | The SVG filter as a string, with no DOM access, for server rendering or custom setups. |
+| `applyLite(options)` / `removeLite()` | Lite mode on its own, without the page state. |
 | `INKS` / `PAPER` | The ink presets and the default paper color. |
 
-Options use the same names as the script-tag attributes, in camel case: `inkA`, `inkB`, `paper`, `grain`, `misregistration` and `target`.
+Options use the same names as the script-tag attributes, in camel case: `inkA`, `inkB`, `paper`, `grain`, `misregistration`, `mode` and `target`.
+
+### Lite mode
+
+The default print runs an SVG filter over the page, which gives real 1-bit separations but re-runs on every repaint, so long or animated pages can scroll slowly. Lite mode lays five fixed blend layers over the page instead: it removes the color, pushes the midtones toward ink A, turns the darks into the overprint color of both inks, puts everything on paper, and scatters ink A grain on top. Nothing on the page is filtered, so scrolling stays fast and fixed headers keep working in every browser.
+
+```js
+apply({ mode: "lite" });
+```
+
+Lite mode is a tint rather than a true separation, so it has no misregistration or halftone dots. Anything with a `z-index` above `2147482000` sits above the layers and stays unprinted, which is how the Riso-fy button stays in its own colors; a site's own toggle button can do the same. Lite options: `inkA`, `inkB`, `paper`, `mids` (how strongly the midtones take ink A, default `0.7`), `grain` (speck density, default `0.05`) and `zIndex`.
 
 ### Browser support
 
@@ -280,7 +292,7 @@ Scripts load in the order listed in `index.html` and share global scope, so keep
 
 ## Limits
 
-- The SVG filter re-runs on every repaint, so long pages with many animations can scroll less smoothly while printed. Use `target` to print only some sections if that happens.
+- The SVG filter re-runs on every repaint, so long pages with many animations can scroll less smoothly while printed. Use [lite mode](#lite-mode), or `target` to print only some sections, if that happens.
 - Outside Chrome-based browsers, fixed headers scroll with the page while it is printed. See [Browser support](#browser-support).
 - The filter produces grain rather than true halftone dots. Use the canvas pipeline when you need dots.
 - Two inks cannot reproduce every color. Pick inks that suit the image.

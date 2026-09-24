@@ -1,6 +1,7 @@
 // riso-fy a live page: mount the filter, apply it to the page or to chosen elements
 
 import { svgMarkup, filterUrl, FILTER_DEFAULTS } from "./filter.js";
+import { applyLite, removeLite } from "./lite.js";
 
 const originals = new WeakMap();
 const listeners = new Set();
@@ -41,7 +42,14 @@ export function mount(options = {}) {
   return svg;
 }
 
+// mode "lite" lays blend layers over the page instead of filtering it: faster,
+// works with fixed elements everywhere, but grain and tint rather than real separations
 export function apply(options = {}) {
+  if (options.mode === "lite") {
+    applyLite(options);
+    setState(true);
+    return;
+  }
   mount(options);
   const url = filterUrl(options.id);
   resolveTargets(options.target).forEach((el) => {
@@ -53,6 +61,11 @@ export function apply(options = {}) {
 }
 
 export function remove(options = {}) {
+  if (options.mode === "lite") {
+    removeLite();
+    setState(false);
+    return;
+  }
   resolveTargets(options.target).forEach((el) => {
     el.style.filter = originals.get(el) || "";
     originals.delete(el);
