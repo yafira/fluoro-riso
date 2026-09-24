@@ -12,6 +12,7 @@ export const LITE_DEFAULTS = {
   paper: PAPER,
   mids: 0.7,
   grain: 0.05,
+  desaturate: false,
   seed: 1,
   zIndex: 2147482000
 };
@@ -49,16 +50,19 @@ function overprint(a, b) {
 }
 
 // each layer blends with everything painted below it, in this order:
-// strip the color, push the midtones toward ink a, lift the blacks to the
-// overprint color of both inks, sit the whole thing on paper, then scatter grain
+// push the midtones toward ink a, lift the blacks to the overprint color of
+// both inks, then lay paper and grain together in one multiply.
+// three layers, all blend modes browsers can run on the gpu. the optional
+// desaturate layer uses "saturation", which safari draws in software and can
+// make pages stutter, so it's off unless a colorful site needs it
 function layers(o) {
-  return [
-    "background:#808080;mix-blend-mode:saturation",
+  const list = [
     `background:${o.inkA};mix-blend-mode:overlay;opacity:${o.mids}`,
     `background:${overprint(o.inkA, o.inkB)};mix-blend-mode:screen`,
-    `background:${o.paper};mix-blend-mode:multiply`,
-    `background-image:url(${grainTile(o.inkA, o.grain, o.seed)});mix-blend-mode:multiply`
+    `background-color:${o.paper};background-image:url(${grainTile(o.inkA, o.grain, o.seed)});mix-blend-mode:multiply`
   ];
+  if (o.desaturate) list.unshift("background:#808080;mix-blend-mode:saturation");
+  return list;
 }
 
 export function applyLite(options = {}) {

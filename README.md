@@ -148,13 +148,15 @@ Options use the same names as the script-tag attributes, in camel case: `inkA`, 
 
 ### Lite mode
 
-The default print runs an SVG filter over the page, which gives real 1-bit separations but re-runs on every repaint, so long or animated pages can scroll slowly. Lite mode lays five fixed blend layers over the page instead: it removes the color, pushes the midtones toward ink A, turns the darks into the overprint color of both inks, puts everything on paper, and scatters ink A grain on top. Nothing on the page is filtered, so scrolling stays fast and fixed headers keep working in every browser.
+The default print runs an SVG filter over the page, which gives real 1-bit separations but re-runs on every repaint, so long or animated pages can scroll slowly. Lite mode lays three fixed blend layers over the page instead: it pushes the midtones toward ink A, turns the darks into the overprint color of both inks, and puts everything on paper with a scatter of ink A grain. Nothing on the page is filtered, and all three blend modes run on the GPU, so scrolling stays fast and fixed headers keep working in every browser.
 
 ```js
 apply({ mode: "lite" });
 ```
 
-Lite mode is a tint rather than a true separation, so it has no misregistration or halftone dots. Anything with a `z-index` above `2147482000` sits above the layers and stays unprinted, which is how the Riso-fy button stays in its own colors; a site's own toggle button can do the same. Lite options: `inkA`, `inkB`, `paper`, `mids` (how strongly the midtones take ink A, default `0.7`), `grain` (speck density, default `0.05`) and `zIndex`.
+Lite mode is a tint rather than a true separation, so it has no misregistration or halftone dots. Anything with a `z-index` above `2147482000` sits above the layers and stays unprinted, which is how the Riso-fy button stays in its own colors; a site's own toggle button can do the same. Lite options: `inkA`, `inkB`, `paper`, `mids` (how strongly the midtones take ink A, default `0.7`), `grain` (speck density, default `0.05`), `desaturate` and `zIndex`.
+
+`desaturate: true` adds a fourth layer that strips the page's own colors first, which helps very colorful sites print cleanly in two inks. It uses the `saturation` blend mode, which Safari draws in software, so leave it off on long or animated pages.
 
 ### Browser support
 
